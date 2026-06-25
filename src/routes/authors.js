@@ -9,7 +9,7 @@ const router = express.Router();
 const pool = require('../db/config.js');
 
 const validateAuthor = require('../middlewares/authorvalidator.js');
-const authorsController = require('../controllers/authorcontroller.js');
+const authorsController = require('../CCcontrollers/authorcontroller.js');
 
 
 
