@@ -8,22 +8,26 @@ const router = express.Router();
 
 const pool = require('../db/config.js');
 
-const authorscontroller = require('../Controllers/authorcontroller');
+const validateAuthor = require('../middlewares/authorvalidator.js');
+const authorsController = require('../controllers/authorcontroller.js');
 
 
 
 // GET /api/authors - Obtener todos los autores
-router.get('/', authorscontroller.getAllAuthors);
+router.get('/', authorsController.getAllAuthors);
 
 // GET /api/authors/:id - Obtener un autor por ID
-router.get('/:id', authorscontroller.getAuthorById);
+router.get('/:id', authorsController.getAuthorById);
 
 // POST /api/authors - Crear un nuevo autor
-router.post('/', authorscontroller.createAuthor);
+router.post('/', validateAuthor, authorsController.createAuthor);
 // PUT /api/authors/:id - Actualizar un autor
-router.put('/:id', authorscontroller.updateAuthor);
+router.put('/:id', authorsController.updateAuthor);
 
 // DELETE /api/authors/:id - Eliminar un autor
-router.delete('/:id', authorscontroller.deleteAuthor);
+router.delete('/:id', authorsController.deleteAuthor);
+
+
+
 
 module.exports = router;

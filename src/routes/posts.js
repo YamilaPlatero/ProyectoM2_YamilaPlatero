@@ -8,7 +8,8 @@ const router = express.Router();
 
 const pool = require('../db/config.js');
 
-const PostsController = require('../Controllers/postcontroller.js');
+const validatePost = require('../middlewares/postvalidator.js');
+const PostsController = require('../controllers/postcontroller.js');
 
 // GET /api/posts - Obtener todos los posts
 router.get('/', PostsController.getAllPosts);

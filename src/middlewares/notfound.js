@@ -1,5 +1,5 @@
-function notFound(req, res) {
+function notfound(req, res) {
   res.status(404).json({ error: 'Ruta no encontrada' });
 }
 
-module.exports = notFound;
+module.exports = notfound;

@@ -2,7 +2,6 @@ const pool = require("../db/config");
 
 const authorservice = require('../services/authorservice');
 
-const validarEmail = require('../utils/validators');
 
 const getAllAuthors = async (req, res) => {
   try {
@@ -13,6 +12,7 @@ const getAllAuthors = async (req, res) => {
     res.status(500).json({ error: 'Error obteniendo autores' });
   }
 }
+
 
 const getAuthorById = async (req, res) => {
   try {
@@ -39,9 +39,9 @@ const createAuthor = async (req, res) => {
     return res.status(400).json({ error: 'Nombre y email son requeridos' });
   }
   
-   if (!email || !validarEmail(email)) {
-    return res.status(400).json({ error: 'El formato del email es inválido' });
-  }
+   //if (!email || !validarEmail(email)) {
+    //return res.status(400).json({ error: 'El formato del email es inválido' });
+  //}
 
   try {
     const result = await pool.query(
