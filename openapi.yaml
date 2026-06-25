@@ -1,0 +1,476 @@
+openapi: "3.0.3"
+info:
+  title: Blog API
+  description: API RESTful para un blog con autores y posts
+  version: "1.0.0"
+  contact:
+    name: Yamila Platero
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo
+
+paths:
+  /:
+    get:
+      summary: Raíz de la API
+      tags:
+        - General
+      responses:
+        "200":
+          description: Información de la API
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Blog API
+                  endpoints:
+                    type: object
+                    properties:
+                      authors:
+                        type: string
+                        example: /api/authors
+                      posts:
+                        type: string
+                        example: /api/posts
+
+  /api/authors:
+    get:
+      summary: Obtener todos los autores
+      tags:
+        - Autores
+      responses:
+        "200":
+          description: Lista de autores ordenados por nombre
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Author"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      summary: Crear un nuevo autor
+      tags:
+        - Autores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+              properties:
+                name:
+                  type: string
+                  description: Nombre del autor (no vacío)
+                  example: Juan Pérez
+                email:
+                  type: string
+                  format: email
+                  description: Email único del autor
+                  example: juan@example.com
+                bio:
+                  type: string
+                  description: Biografía del autor (opcional)
+                  example: Desarrollador full-stack
+      responses:
+        "201":
+          description: Autor creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/authors/{id}:
+    get:
+      summary: Obtener un autor por ID
+      tags:
+        - Autores
+      parameters:
+        - $ref: "#/components/parameters/AuthorId"
+      responses:
+        "200":
+          description: Autor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    put:
+      summary: Actualizar un autor (parcial)
+      tags:
+        - Autores
+      parameters:
+        - $ref: "#/components/parameters/AuthorId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                name:
+                  type: string
+                  description: Nombre del autor
+                  example: Juan Pérez Actualizado
+                email:
+                  type: string
+                  format: email
+                  description: Email único del autor
+                  example: juan.nuevo@example.com
+                bio:
+                  type: string
+                  description: Biografía del autor
+                  example: Nueva biografía
+      responses:
+        "200":
+          description: Autor actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      summary: Eliminar un autor y sus posts
+      tags:
+        - Autores
+      parameters:
+        - $ref: "#/components/parameters/AuthorId"
+      responses:
+        "200":
+          description: Autor eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Autor eliminado exitosamente
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/posts:
+    get:
+      summary: Obtener todos los posts
+      tags:
+        - Posts
+      parameters:
+        - in: query
+          name: published
+          schema:
+            type: string
+            enum: ["true", "false"]
+          description: Filtrar por estado de publicación
+          example: "true"
+      responses:
+        "200":
+          description: Lista de posts ordenados por fecha descendente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      summary: Crear un nuevo post
+      tags:
+        - Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+                - author_id
+              properties:
+                title:
+                  type: string
+                  description: Título del post
+                  example: Mi nuevo post
+                content:
+                  type: string
+                  description: Contenido del post
+                  example: Contenido detallado del post...
+                author_id:
+                  type: integer
+                  description: ID del autor (debe existir)
+                  example: 1
+                published:
+                  type: boolean
+                  description: Estado de publicación
+                  default: false
+                  example: true
+      responses:
+        "201":
+          description: Post creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/posts/{id}:
+    get:
+      summary: Obtener un post por ID
+      tags:
+        - Posts
+      parameters:
+        - $ref: "#/components/parameters/PostId"
+      responses:
+        "200":
+          description: Post encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    put:
+      summary: Actualizar un post (parcial)
+      tags:
+        - Posts
+      parameters:
+        - $ref: "#/components/parameters/PostId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                title:
+                  type: string
+                  description: Título del post
+                  example: Título actualizado
+                content:
+                  type: string
+                  description: Contenido del post
+                  example: Contenido actualizado...
+                published:
+                  type: boolean
+                  description: Estado de publicación
+                  example: true
+      responses:
+        "200":
+          description: Post actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      summary: Eliminar un post
+      tags:
+        - Posts
+      parameters:
+        - $ref: "#/components/parameters/PostId"
+      responses:
+        "200":
+          description: Post eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post eliminado exitosamente
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/posts/author/{authorId}:
+    get:
+      summary: Obtener posts por autor
+      tags:
+        - Posts
+      parameters:
+        - $ref: "#/components/parameters/AuthorIdForPosts"
+      responses:
+        "200":
+          description: Posts del autor (puede ser array vacío)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+components:
+  parameters:
+    AuthorId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: ID del autor
+      example: 1
+
+    AuthorIdForPosts:
+      in: path
+      name: authorId
+      required: true
+      schema:
+        type: integer
+      description: ID del autor
+      example: 1
+
+    PostId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: ID del post
+      example: 1
+
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del autor
+          example: 1
+        name:
+          type: string
+          description: Nombre del autor
+          example: Ana García
+        email:
+          type: string
+          format: email
+          description: Email del autor
+          example: ana@example.com
+        bio:
+          type: string
+          nullable: true
+          description: Biografía del autor
+          example: Desarrolladora full-stack apasionada por Node.js
+        created_at:
+          type: string
+          format: date-time
+          description: Fecha de creación
+          example: "2025-01-01T00:00:00.000Z"
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del post
+          example: 1
+        title:
+          type: string
+          description: Título del post
+          example: Introducción a Node.js
+        content:
+          type: string
+          description: Contenido del post
+          example: Node.js es un runtime de JavaScript...
+        author_id:
+          type: integer
+          description: ID del autor que escribió el post
+          example: 1
+        published:
+          type: boolean
+          description: Estado de publicación
+          example: true
+        created_at:
+          type: string
+          format: date-time
+          description: Fecha de creación
+          example: "2025-01-01T00:00:00.000Z"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Mensaje de error
+
+  responses:
+    BadRequest:
+      description: Error de validación
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: El nombre es obligatorio
+
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Autor no encontrado
+
+    Conflict:
+      description: Conflicto (email duplicado)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: El email ya está registrado
+
+    ServerError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Error obteniendo autores
