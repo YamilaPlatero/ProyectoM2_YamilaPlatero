@@ -7,10 +7,19 @@ const getAllAuthors = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM authors ORDER BY name');
     res.json(result.rows);
+    
   } catch (error) {
-    console.error('Error obteniendo autores:', error);
-    res.status(500).json({ error: 'Error obteniendo autores' });
-  }
+  console.error('Error obteniendo autores:', error);
+  res.status(500).json({
+    error: 'Error obteniendo autores',
+    detail: error.message,
+  });
+}
+  
+  //catch (error) {
+    //console.error('Error obteniendo autores:', error);
+    //res.status(500).json({ error: 'Error obteniendo autores' });
+  //}
 }
 
 
