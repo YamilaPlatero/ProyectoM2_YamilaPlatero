@@ -1,6 +1,4 @@
 
-//const { loadEnvFile } = require('node:process');
-//loadEnvFile('.env');
 // Importar dependencias
 const express = require('express');
 

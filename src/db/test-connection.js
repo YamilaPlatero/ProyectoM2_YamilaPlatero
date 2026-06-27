@@ -1,6 +1,5 @@
-//const { loadEnvFile } = require('node:process');
-//loadEnvFile('.env');
-require('dotenv').config();
+
+//require('dotenv').config();
 
 const pool = require('./config');
 
