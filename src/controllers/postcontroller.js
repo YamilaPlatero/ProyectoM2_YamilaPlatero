@@ -2,8 +2,6 @@ const pool = require("../db/config");
 
 const postService = require('../services/postservice');
 
-
-
 // GET /api/posts - Obtener todos los posts
 const getAllPosts = async (req, res) => {
   const { published } = req.query;
@@ -26,7 +24,7 @@ const getAllPosts = async (req, res) => {
     res.status(500).json({ error: 'Error obteniendo posts' });
   }
 }
-
+// GET /api/posts/:id - Obtener un post por ID
 const getPostById = async (req, res) => {
   try {
     const result = await pool.query(
@@ -44,7 +42,6 @@ const getPostById = async (req, res) => {
     res.status(500).json({ error: 'Error obteniendo post' });
   }
 }
-
 // GET /api/posts/author/:authorId - Obtener posts por autor
 const getPostsByAuthorId = async (req, res) => {
   try {
@@ -59,7 +56,7 @@ const getPostsByAuthorId = async (req, res) => {
     res.status(500).json({ error: 'Error obteniendo posts del autor' });
   }
 }
-
+// POST /api/posts - Crear un nuevo post
 const createPost = async (req, res) => {
   const { title, content, author_id, published } = req.body;
   
@@ -86,8 +83,7 @@ const createPost = async (req, res) => {
     res.status(500).json({ error: 'Error creando post' });
   }
 }
-
-
+// PUT /api/posts/:id - Actualizar un post existente
 const updatePost = async (req, res) => {
   const { title, content, published } = req.body;
   
@@ -107,7 +103,7 @@ const updatePost = async (req, res) => {
     res.status(500).json({ error: 'Error actualizando post' });
   }
 }
-
+// DELETE /api/posts/:id - Eliminar un post
 const deletePost = async (req, res) => {
   try {
     const result = await pool.query(

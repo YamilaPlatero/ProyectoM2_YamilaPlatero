@@ -1,6 +1,3 @@
-
-//require('dotenv').config();
-
 const express = require('express');
 
 const router = express.Router();
@@ -12,6 +9,7 @@ const PostsController = require('../controllers/postcontroller.js');
 
 // GET /api/posts - Obtener todos los posts
 router.get('/', PostsController.getAllPosts);
+
 // GET /api/posts/:id - Obtener un post por ID
 router.get('/:id', PostsController.getPostById);
 

@@ -1,6 +1,7 @@
 const validateAuthor = (req, res, next) => {
   const { name, email } = req.body;
 
+
   if (!name || name.trim() === '') {
     return res.status(400).json({
       error: 'El nombre es obligatorio'
@@ -12,8 +13,6 @@ const validateAuthor = (req, res, next) => {
       error: 'Email inválido'
     });
   }
-
-  
 
   next();
 };

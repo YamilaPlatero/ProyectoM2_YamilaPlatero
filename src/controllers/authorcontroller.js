@@ -2,18 +2,23 @@ const pool = require("../db/config");
 
 const authorservice = require('../services/authorservice');
 
-
+// GET /api/authors - Obtener todos los autores
 const getAllAuthors = async (req, res) => {
+
   try {
-    const result = await pool.query('SELECT * FROM authors ORDER BY name');
+    const result = await pool.query(
+      'SELECT * FROM authors ORDER BY id ASC'
+    );
+
     res.json(result.rows);
-    
+
   } catch (error) {
     console.error('Error obteniendo autores:', error);
     res.status(500).json({ error: 'Error obteniendo autores' });
   }
-}
 
+}
+// GET /api/authors/:id - Obtener un autor por ID
 const getAuthorById = async (req, res) => {
   try {
     const result = await pool.query(
@@ -31,16 +36,15 @@ const getAuthorById = async (req, res) => {
     res.status(500).json({ error: 'Error obteniendo autor' });
   }
 }
-
+// POST /api/authors - Crear un nuevo autor
 const createAuthor = async (req, res) => {
   const { name, email, bio } = req.body;
-
   try {
     const result = await pool.query(
       'INSERT INTO authors (name, email, bio) VALUES ($1, $2, $3) RETURNING *',
       [name, email, bio || null]
-    );
-
+  );
+    
     res.status(201).json(result.rows[0]);
 
   } catch (error) {
@@ -51,9 +55,12 @@ const createAuthor = async (req, res) => {
     }
 
     res.status(500).json({ error: 'Error creando autor' });
+
+    
+
   }
 };
-
+// PUT /api/authors/:id - Actualizar un autor existente
 const updateAuthor = async (req, res) => {
   const { name, email, bio } = req.body;
   
@@ -78,7 +85,7 @@ const updateAuthor = async (req, res) => {
     res.status(500).json({ error: 'Error actualizando autor' });
   }
 }
-
+// DELETE /api/authors/:id - Eliminar un autor
 const deleteAuthor = async (req, res) => {
   try {
     const result = await pool.query(

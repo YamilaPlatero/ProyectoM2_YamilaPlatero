@@ -6,7 +6,7 @@ CREATE TABLE authors (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Tabla de posts
+
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
   title VARCHAR(200) NOT NULL,

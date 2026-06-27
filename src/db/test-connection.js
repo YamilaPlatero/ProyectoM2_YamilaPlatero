@@ -1,6 +1,3 @@
-
-//require('dotenv').config();
-
 const pool = require('./config');
 
 async function testConnection() {

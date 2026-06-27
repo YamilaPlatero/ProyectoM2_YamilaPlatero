@@ -1,19 +1,19 @@
-
 // Importar dependencias
 const express = require('express');
 
 // Importar rutas
 const authorsRouter = require('./src/routes/authors');
 const postsRouter = require('./src/routes/posts');
+
 // Importar middlewares
 const validateAuthor = require('./src/middlewares/authorvalidator');
 const validatePost = require('./src/middlewares/postvalidator');
 
 //const errorHandler = require('./src/middlewares/errorHandler');
 const notFound = require('./src/middlewares/notfound');
+
 // Crear instancia de Express
 const app = express();
-
 
 // Middlewares base
 app.use(express.json());
@@ -32,8 +32,6 @@ app.get('/', (req, res) => {
     }
   });
 });
-
-//
 
 // 404
 app.use(notFound);
