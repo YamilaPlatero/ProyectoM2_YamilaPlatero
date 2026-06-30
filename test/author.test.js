@@ -21,3 +21,13 @@ test('POST /api/authors sin nombre devuelve 400', async () => {
   expect(res.body.error).toBe('El nombre es obligatorio');
 });
 
+test('POST/api/authors mail registrado devuelve 409', async () => {
+  const res = await request(app)
+    .post('/api/authors')
+    .send({
+      name: 'Juan',
+      email: 'juan@gmail.com'
+    });
+
+});
+

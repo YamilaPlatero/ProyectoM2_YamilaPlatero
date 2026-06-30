@@ -6,7 +6,7 @@ const authorsRouter = require('./src/routes/authors');
 const postsRouter = require('./src/routes/posts');
 
 // Importar middlewares
-const validateAuthor = require('../NuevoPI2/src/validators/authorvalidator.js');
+const validateAuthor = require('./src/validators/authorvalidator.js');
 const validatePost = require('./src/validators/postvalidator.js');
 
 //const errorHandler = require('./src/middlewares/errorHandler');
