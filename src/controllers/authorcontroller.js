@@ -1,113 +1,92 @@
-const pool = require("../db/config");
+const authorService = require("../services/authorservice");
 
-const authorservice = require('../services/authorservice');
-
-// GET /api/authors - Obtener todos los autores
+// Obtener todos
 const getAllAuthors = async (req, res) => {
-
   try {
-    const result = await pool.query(
-      'SELECT * FROM authors ORDER BY id ASC'
-    );
-
-    res.json(result.rows);
-
+    const authors = await authorService.getAllAuthors();
+    res.json(authors);
   } catch (error) {
-    console.error('Error obteniendo autores:', error);
-    res.status(500).json({ error: 'Error obteniendo autores' });
-  }
-
-}
-// GET /api/authors/:id - Obtener un autor por ID
-const getAuthorById = async (req, res) => {
-  try {
-    const result = await pool.query(
-      'SELECT * FROM authors WHERE id = $1',
-      [req.params.id]
-    );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Autor no encontrado' });
-    }
-    
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error obteniendo autor:', error);
-    res.status(500).json({ error: 'Error obteniendo autor' });
-  }
-}
-// POST /api/authors - Crear un nuevo autor
-const createAuthor = async (req, res) => {
-  const { name, email, bio } = req.body;
-  try {
-    const result = await pool.query(
-      'INSERT INTO authors (name, email, bio) VALUES ($1, $2, $3) RETURNING *',
-      [name, email, bio || null]
-  );
-    
-    res.status(201).json(result.rows[0]);
-
-  } catch (error) {
-    console.error('Error creando autor:', error);
-
-    if (error.code === '23505') {
-      return res.status(409).json({ error: 'El email ya está registrado' });
-    }
-
-    res.status(500).json({ error: 'Error creando autor' });
-
-    
-
+    console.error("Error obteniendo autores:", error);
+    res.status(500).json({ error: "Error obteniendo autores" });
   }
 };
-// PUT /api/authors/:id - Actualizar un autor existente
-const updateAuthor = async (req, res) => {
-  const { name, email, bio } = req.body;
-  
+
+// Obtener por ID
+const getAuthorById = async (req, res) => {
   try {
-    const result = await pool.query(
-      'UPDATE authors SET name = COALESCE($1, name), email = COALESCE($2, email), bio = COALESCE($3, bio) WHERE id = $4 RETURNING *',
-      [name, email, bio, req.params.id]
-    );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Autor no encontrado' });
+    const author = await authorService.getAuthorById(req.params.id);
+
+    if (!author) {
+      return res.status(404).json({ error: "Autor no encontrado" });
     }
-    
-    res.json(result.rows[0]);
+
+    res.json(author);
   } catch (error) {
-    console.error('Error actualizando autor:', error);
-    
-    if (error.code === '23505') {
-      return res.status(409).json({ error: 'El email ya está registrado' });
-    }
-    
-    res.status(500).json({ error: 'Error actualizando autor' });
+    console.error("Error obteniendo autor:", error);
+    res.status(500).json({ error: "Error obteniendo autor" });
   }
-}
-// DELETE /api/authors/:id - Eliminar un autor
+};
+
+// Crear
+const createAuthor = async (req, res) => {
+  try {
+    const author = await authorService.createAuthor(req.body);
+    res.status(201).json(author);
+  } catch (error) {
+    console.error("Error creando autor:", error);
+
+    if (error.code === "23505") {
+      return res.status(409).json({ error: "El email ya está registrado" });
+    }
+
+    res.status(500).json({ error: "Error creando autor" });
+  }
+};
+
+// Actualizar
+const updateAuthor = async (req, res) => {
+  try {
+    const author = await authorService.updateAuthor(
+      req.params.id,
+      req.body
+    );
+
+    if (!author) {
+      return res.status(404).json({ error: "Autor no encontrado" });
+    }
+
+    res.json(author);
+  } catch (error) {
+    console.error("Error actualizando autor:", error);
+
+    if (error.code === "23505") {
+      return res.status(409).json({ error: "El email ya está registrado" });
+    }
+
+    res.status(500).json({ error: "Error actualizando autor" });
+  }
+};
+
+// Eliminar
 const deleteAuthor = async (req, res) => {
   try {
-    const result = await pool.query(
-      'DELETE FROM authors WHERE id = $1',
-      [req.params.id]
-    );
-    
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Autor no encontrado' });
+    const deleted = await authorService.deleteAuthor(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Autor no encontrado" });
     }
-    
-    res.json({ message: 'Autor eliminado exitosamente' });
+
+    res.json({ message: "Autor eliminado exitosamente" });
   } catch (error) {
-    console.error('Error eliminando autor:', error);
-    res.status(500).json({ error: 'Error eliminando autor' });
+    console.error("Error eliminando autor:", error);
+    res.status(500).json({ error: "Error eliminando autor" });
   }
-}
+};
 
 module.exports = {
-  createAuthor,
   getAllAuthors,
   getAuthorById,
+  createAuthor,
   updateAuthor,
-  deleteAuthor
+  deleteAuthor,
 };
