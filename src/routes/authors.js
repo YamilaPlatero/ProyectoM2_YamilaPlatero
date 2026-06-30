@@ -4,7 +4,7 @@ const router = express.Router();
 
 const pool = require('../db/config.js');
 
-const validateAuthor = require('../middlewares/authorvalidator.js');
+const validateAuthor = require('../validators/authorvalidator.js');
 const authorsController = require('../controllers/authorcontroller.js');
 
 // GET /api/authors - Obtener todos los autores
