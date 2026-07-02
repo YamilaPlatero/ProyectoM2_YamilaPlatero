@@ -2,15 +2,15 @@
 const express = require('express');
 
 // Importar rutas
-const authorsRouter = require('./src/routes/authors');
-const postsRouter = require('./src/routes/posts');
+const authorsRouter = require('./src/routes/authors.js');
+const postsRouter = require('./src/routes/posts.js');
 
 // Importar middlewares
 const validateAuthor = require('./src/validators/authorvalidator.js');
 const validatePost = require('./src/validators/postvalidator.js');
 
 //const errorHandler = require('./src/middlewares/errorHandler');
-const notFound = require('./src/middlewares/notfound');
+const notFound = require('./src/middlewares/notfound.js');
 
 // Crear instancia de Express
 const app = express();
